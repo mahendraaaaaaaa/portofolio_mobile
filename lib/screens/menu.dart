@@ -1,14 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
-import 'package:myportofolio_mobile/widgets/item_card.dart';
+import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:myportofolio_mobile/widgets/project_card.dart';
 
 /// Halaman utama MyPortfolio Mobile: identitas pemilik di bagian atas, lalu
-/// menu tombol untuk bagian-bagian portofolio.
+/// menu tombol untuk bagian-bagian portofolio. Navigasi antarhalaman juga bisa
+/// lewat drawer di sisi kiri.
 ///
 /// Halaman ini [StatelessWidget] karena tidak ada data yang berubah selama
-/// halaman tampil. Reaksi tombol (SnackBar dan dialog) ditangani [ItemCard],
-/// bukan di sini.
+/// halaman tampil. Reaksi tombol (SnackBar, dialog, dan pindah halaman)
+/// ditangani [ItemCard], bukan di sini.
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
@@ -42,9 +44,11 @@ class MyHomePage extends StatelessWidget {
           'MyPortfolio',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        // foregroundColor mewarnai judul sekaligus ikon hamburger drawer.
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
       ),
+      drawer: const LeftDrawer(),
       // SingleChildScrollView dan batas lebar 600 menjaga tampilan tetap rapi
       // dan tidak overflow, baik di layar HP maupun di jendela Chrome yang lebar.
       body: SingleChildScrollView(

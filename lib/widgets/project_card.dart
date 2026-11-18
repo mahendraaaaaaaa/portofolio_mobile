@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// Kartu tombol menu portofolio. Teks, ikon, dan warnanya dibaca dari [item].
 ///
 /// Saat ditekan, muncul SnackBar yang menyebut nama tombolnya, misalnya
-/// "Kamu telah menekan tombol Lihat Proyek!". Kalau [ItemHomepage.confirmMessage]
-/// terisi (mis. Logout), dialog konfirmasi ikut muncul supaya pengguna tidak
-/// menekan tombol itu tanpa sengaja.
+/// "Kamu telah menekan tombol Lihat Proyek!". Tombol "Tambah Proyek" juga
+/// membuka halaman formulir. Kalau [ItemHomepage.confirmMessage] terisi
+/// (mis. Logout), dialog konfirmasi ikut muncul supaya pengguna tidak menekan
+/// tombol itu tanpa sengaja.
 class ItemCard extends StatelessWidget {
   /// Data tombol yang ditampilkan kartu ini.
   final ItemHomepage item;
@@ -49,6 +51,17 @@ class ItemCard extends StatelessWidget {
       ..showSnackBar(
         SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
       );
+
+    // push menumpuk halaman form di atas halaman menu, jadi tombol Back
+    // (perangkat maupun browser) membawa pengguna kembali ke menu.
+    if (item.name == "Tambah Proyek") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ProjectFormPage(),
+        ),
+      );
+    }
 
     final message = item.confirmMessage;
     if (message == null) return;
