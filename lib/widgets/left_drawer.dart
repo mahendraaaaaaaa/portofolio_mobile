@@ -1,10 +1,12 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// Menu yang bisa digeser dari sisi kiri layar, untuk berpindah antara halaman
-/// utama dan halaman tambah proyek. Dipasang lewat properti `drawer` milik
-/// Scaffold, jadi tombol hamburger di AppBar muncul otomatis.
+/// utama, halaman tambah proyek, dan halaman tambah experience. Dipasang lewat
+/// properti `drawer` milik Scaffold, jadi tombol hamburger di AppBar muncul
+/// otomatis. Drawer yang sama dipakai di semua halaman tersebut.
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
@@ -42,25 +44,41 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
-            // pushReplacement: halaman sekarang diganti, bukan ditumpuk, jadi
-            // pengguna tidak menumpuk halaman yang sama berkali-kali.
+            // pushAndRemoveUntil: halaman utama menggantikan seluruh tumpukan
+            // halaman. Kalau form dibuka dari kartu, tumpukannya sudah berisi
+            // halaman utama; pushReplacement biasa akan meninggalkan dua
+            // halaman utama bertumpuk.
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MyHomePage(),
                 ),
+                (route) => false,
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Project'),
+            // pushReplacement: halaman sekarang diganti, bukan ditumpuk.
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ProjectFormPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.work_history_outlined),
+            title: const Text('Add Experience'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ExperienceFormPage(),
                 ),
               );
             },
