@@ -1,15 +1,18 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 /// Kartu tombol menu portofolio. Teks, ikon, warna, dan halaman tujuannya
 /// dibaca dari [item].
 ///
-/// Saat ditekan, muncul SnackBar yang menyebut nama tombolnya, misalnya
-/// "Kamu telah menekan tombol Lihat Proyek!". Kalau [ItemHomepage.destination]
-/// terisi (mis. Tambah Proyek dan Tambah Experience), halaman tujuan dibuka
-/// dengan `Navigator.push`. Kalau [ItemHomepage.confirmMessage] terisi
-/// (mis. Logout), dialog konfirmasi ikut muncul supaya pengguna tidak menekan
-/// tombol itu tanpa sengaja.
+/// Saat ditekan, muncul SnackBar yang menyebut nama tombolnya. Kalau
+/// [ItemHomepage.requiresLogin] true, pengguna diarahkan ke layar login dulu
+/// bila belum login. Kalau [ItemHomepage.destination] terisi, halaman tujuan
+/// dibuka dengan `Navigator.push`. Kalau [ItemHomepage.confirmMessage] terisi
+/// (mis. Logout), dialog konfirmasi muncul; untuk tombol logout, konfirmasi
+/// memanggil AuthState.logout().
 class ItemCard extends StatelessWidget {
   /// Data tombol yang ditampilkan kartu ini.
   final ItemHomepage item;
@@ -44,9 +47,24 @@ class ItemCard extends StatelessWidget {
     );
   }
 
-  void _handleTap(BuildContext context) {
-    // Disimpan dulu karena dipakai lagi dari dalam dialog di bawah.
+  Future<void> _handleTap(BuildContext context) async {
+    // Disimpan dulu karena dipakai lagi setelah await / dari dalam dialog.
     final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final auth = context.read<AuthState>();
+
+    if (item.isLogout && !auth.isLoggedIn) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Kamu belum login.')));
+      return;
+    }
+
+    if (item.requiresLogin) {
+      final ok = await ensureLoggedIn(context);
+      if (!ok || !context.mounted) return;
+    }
+
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -57,10 +75,7 @@ class ItemCard extends StatelessWidget {
     // (perangkat maupun browser) membawa pengguna kembali ke menu.
     final destination = item.destination;
     if (destination != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: destination),
-      );
+      navigator.push(MaterialPageRoute(builder: destination));
     }
 
     final message = item.confirmMessage;
@@ -77,16 +92,13 @@ class ItemCard extends StatelessWidget {
             child: const Text('Batal'),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(dialogContext).pop();
+              if (item.isLogout) await auth.logout();
               messenger
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "${item.name} berhasil (simulasi, belum terhubung ke Django).",
-                    ),
-                  ),
+                  SnackBar(content: Text('${item.name} berhasil.')),
                 );
             },
             child: const Text('Ya, lanjutkan'),

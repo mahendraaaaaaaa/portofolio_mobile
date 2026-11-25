@@ -23,11 +23,20 @@ class ItemHomepage {
   /// pesan ini (dipakai tombol Logout). Kalau kosong, tombol langsung bereaksi.
   final String? confirmMessage;
 
+  /// Kalau true, tombol hanya berjalan setelah pengguna login (kalau belum,
+  /// pengguna diarahkan ke layar login dulu).
+  final bool requiresLogin;
+
+  /// Kalau true, setelah konfirmasi tombol ini memanggil AuthState.logout().
+  final bool isLogout;
+
   ItemHomepage(
     this.name,
     this.icon,
     this.color, {
     this.destination,
     this.confirmMessage,
+    this.requiresLogin = false,
+    this.isLogout = false,
   });
 }

@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
@@ -25,7 +26,12 @@ class MyHomePage extends StatelessWidget {
   /// data di sini, jadi menambah tombol baru cukup menambah satu baris, tanpa
   /// menyentuh [ItemCard].
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue.shade700),
+    ItemHomepage(
+      "Lihat Proyek",
+      Icons.folder,
+      Colors.blue.shade700,
+      destination: (_) => const ProjectListScreen(),
+    ),
     ItemHomepage("Lihat Experience", Icons.work, Colors.green.shade700),
     ItemHomepage("Lihat Skills", Icons.code, Colors.purple.shade600),
     ItemHomepage(
@@ -33,6 +39,7 @@ class MyHomePage extends StatelessWidget {
       Icons.add_circle,
       Colors.orange.shade800,
       destination: (_) => const ProjectFormPage(),
+      requiresLogin: true,
     ),
     ItemHomepage(
       "Tambah Experience",
@@ -45,6 +52,7 @@ class MyHomePage extends StatelessWidget {
       Icons.logout,
       Colors.red.shade700,
       confirmMessage: "Kamu yakin ingin keluar dari MyPortfolio?",
+      isLogout: true,
     ),
   ];
 
